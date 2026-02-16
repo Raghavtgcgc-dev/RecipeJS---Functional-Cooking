@@ -54,4 +54,95 @@ const renderRecipes = (recipesArray) => {
 // Initialize App
 // ==========================
 
-renderRecipes(recipes);
+
+let currentFilter = "all";
+let currentSort = "none";
+
+const filterButtons = document.querySelectorAll(".filter-btn");
+const sortButtons = document.querySelectorAll(".sort-btn");
+
+const filterByDifficulty = (recipes, difficulty) =>
+  recipes.filter(r => r.difficulty === difficulty);
+
+const filterByTime = (recipes, maxTime) =>
+  recipes.filter(r => r.time <= maxTime);
+
+const applyFilter = (recipes, filterType) => {
+  switch (filterType) {
+    case "easy":
+    case "medium":
+    case "hard":
+      return filterByDifficulty(recipes, filterType);
+    case "quick":
+      return filterByTime(recipes, 30);
+    default:
+      return recipes;
+  }
+};
+
+const sortByName = (recipes) =>
+  [...recipes].sort((a, b) => a.title.localeCompare(b.title));
+
+const sortByTime = (recipes) =>
+  [...recipes].sort((a, b) => a.time - b.time);
+
+const applySort = (recipes, sortType) => {
+  switch (sortType) {
+    case "name":
+      return sortByName(recipes);
+    case "time":
+      return sortByTime(recipes);
+    default:
+      return recipes;
+  }
+};
+
+const updateDisplay = () => {
+  let result = recipes;
+
+  result = applyFilter(result, currentFilter);
+  result = applySort(result, currentSort);
+
+  renderRecipes(result);
+};
+
+const updateActiveButtons = () => {
+  filterButtons.forEach(btn => {
+    btn.classList.toggle(
+      "active",
+      btn.dataset.filter === currentFilter
+    );
+  });
+
+  sortButtons.forEach(btn => {
+    btn.classList.toggle(
+      "active",
+      btn.dataset.sort === currentSort
+    );
+  });
+};
+
+const handleFilterClick = (e) => {
+  currentFilter = e.target.dataset.filter;
+  updateActiveButtons();
+  updateDisplay();
+};
+
+const handleSortClick = (e) => {
+  currentSort = e.target.dataset.sort;
+  updateActiveButtons();
+  updateDisplay();
+};
+
+const setupEventListeners = () => {
+  filterButtons.forEach(btn =>
+    btn.addEventListener("click", handleFilterClick)
+  );
+
+  sortButtons.forEach(btn =>
+    btn.addEventListener("click", handleSortClick)
+  );
+};
+
+setupEventListeners();
+updateDisplay();
