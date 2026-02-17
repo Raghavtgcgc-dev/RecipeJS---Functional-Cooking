@@ -122,3 +122,13 @@ main {
   background: #667eea;
   color: white;
 }
+
+.steps-container,
+.ingredients-container {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
